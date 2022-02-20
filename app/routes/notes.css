@@ -1,0 +1,28 @@
+.flexer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+button[type="submit"] {
+  cursor: pointer;
+}
+
+button[type="submit"]:hover,
+button[type="submit"]:focus {
+  background-color: #ececec;
+}
+
+button[type="submit"]:active {
+  background-color: #cfcfcf;
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  background-color: #ececec;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
