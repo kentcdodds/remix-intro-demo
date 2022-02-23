@@ -30,12 +30,12 @@ const action: ActionFunction = async ({ request }) => {
 };
 
 const meta: MetaFunction = () => ({
-  title: "Login"
+  title: "Login",
 });
 
 function LoginPage() {
   const [searchParams] = useSearchParams();
-  const returnTo = searchParams.get("redirectTo") ?? undefined;
+  const redirectTo = searchParams.get("redirectTo") ?? undefined;
 
   return (
     <div>
@@ -44,7 +44,7 @@ function LoginPage() {
       </div>
 
       <Form method="post">
-        <input type="hidden" name="redirectTo" value={returnTo} />
+        <input type="hidden" name="redirectTo" value={redirectTo} />
         <label>
           <span>Email address</span>
           <input name="email" type="email" autoComplete="email" />
@@ -66,7 +66,7 @@ function LoginPage() {
         <Link
           to={{
             pathname: "/join",
-            search: returnTo ? `?returnTo=${returnTo}` : undefined
+            search: redirectTo ? `?redirectTo=${redirectTo}` : undefined,
           }}
         >
           Don't have an account?

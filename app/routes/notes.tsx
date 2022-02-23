@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Form,
   json,
@@ -6,7 +5,6 @@ import {
   redirect,
   useLoaderData,
   useLocation,
-  useTransition,
 } from "remix";
 import type { Note } from "@prisma/client";
 import type { ActionFunction, LoaderFunction } from "remix";
@@ -20,15 +18,15 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-interface LoaderData {
+type LoaderData = {
   notes: Array<Note>;
-}
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const notes = await prisma.note.findMany({
     where: { userId: userId },
-    orderBy: { id: "desc" },
+    orderBy: { createdAt: "desc" },
   });
   return json<LoaderData>({ notes });
 };
@@ -95,17 +93,25 @@ export default function Index() {
         <ul>
           {data.notes.map((note) => (
             <li key={note.id} className="flexer">
-              <Form method="post">
-                <input type="hidden" name="noteId" value={note.id} />
-                <button type="submit" name="_action" value="delete-note">
-                  Delete
-                </button>
-              </Form>
-              <h3>{note.title}</h3>
+              <NoteDisplay note={note} />
             </li>
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function NoteDisplay({ note }: { note: Note }) {
+  return (
+    <div className="flexer">
+      <Form method="post">
+        <input type="hidden" name="noteId" value={note.id} />
+        <button type="submit" name="_action" value="delete-note">
+          Delete
+        </button>
+      </Form>
+      <p>{note.title}</p>
     </div>
   );
 }
