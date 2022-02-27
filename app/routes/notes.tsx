@@ -73,6 +73,9 @@ export default function Index() {
 
   return (
     <div>
+      <Form action="/logout" method="post">
+        <button type="submit">Logout</button>
+      </Form>
       <h1>Notes</h1>
       <Form method="post" key={location.key} className="flexer">
         <input aria-label="Title" name="title" />
