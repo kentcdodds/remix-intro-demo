@@ -51,17 +51,12 @@ export const action: ActionFunction = async ({ request }) => {
 
     case "create-note": {
       const title = formData.get("title");
-      const body = formData.get("body") || "";
 
       if (typeof title !== "string") {
         throw new Response("title must be a string", { status: 400 });
       }
 
-      if (typeof body !== "string") {
-        throw new Response("body must be a string", { status: 400 });
-      }
-
-      await createNote(title, body, userId);
+      await createNote(title, userId);
 
       return redirect("/notes");
     }

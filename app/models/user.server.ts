@@ -6,24 +6,30 @@ async function createUser(email: string, password: string) {
   return prisma.user.create({
     data: {
       email,
-      password: hashedPassword
-    }
+      password: {
+        create: {
+          hash: hashedPassword,
+        },
+      },
+    },
   });
 }
 
-async function verifyLogin(email: string, password: string) {
-  const user = await prisma.user.findUnique({
-    where: { email }
+async function verifyLogin(email: string, passwordString: string) {
+  const result = await prisma.user.findUnique({
+    where: { email },
+    include: { password: true },
   });
 
-  if (!user) {
-    return undefined;
+  if (!result || !result.password) {
+    return null;
   }
+  const { password, ...user } = result;
 
-  const isValid = await bcrypt.verify(password, user.password);
+  const isValid = await bcrypt.verify(passwordString, password.hash);
 
   if (!isValid) {
-    return undefined;
+    return null;
   }
 
   return user;
