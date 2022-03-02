@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
-  const actionType = formData.get("_action");
+  const actionType = formData.get("action");
 
   switch (actionType) {
     case "delete-note": {
@@ -67,7 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function Index() {
+export default function NotesPage() {
   const location = useLocation();
   const data = useLoaderData<LoaderData>();
 
@@ -79,7 +79,7 @@ export default function Index() {
       <h1>Notes</h1>
       <Form method="post" key={location.key} className="flexer">
         <input aria-label="Title" name="title" />
-        <button name="_action" value="create-note" type="submit">
+        <button name="action" value="create-note" type="submit">
           Save
         </button>
       </Form>
@@ -105,7 +105,7 @@ function NoteDisplay({ note }: { note: Note }) {
     <div className="flexer">
       <Form method="post">
         <input type="hidden" name="noteId" value={note.id} />
-        <button type="submit" name="_action" value="delete-note">
+        <button type="submit" name="action" value="delete-note">
           Delete
         </button>
       </Form>
