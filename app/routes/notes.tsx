@@ -3,6 +3,7 @@ import {
   json,
   LinksFunction,
   redirect,
+  useActionData,
   useLoaderData,
   useLocation,
 } from "remix";
@@ -31,6 +32,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({ notes });
 };
 
+type ActionData = { error: string };
+
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
@@ -41,7 +44,10 @@ export const action: ActionFunction = async ({ request }) => {
     case "delete-note": {
       const noteId = formData.get("noteId");
       if (typeof noteId !== "string") {
-        throw new Response("noteId must be a string", { status: 400 });
+        return json<ActionData>(
+          { error: "noteId is required" },
+          { status: 400 }
+        );
       }
 
       await deleteNote(noteId);
@@ -52,8 +58,11 @@ export const action: ActionFunction = async ({ request }) => {
     case "create-note": {
       const title = formData.get("title");
 
-      if (typeof title !== "string") {
-        throw new Response("title must be a string", { status: 400 });
+      if (typeof title !== "string" || !title) {
+        return json<ActionData>(
+          { error: "title is required" },
+          { status: 400 }
+        );
       }
 
       await createNote(title, userId);
@@ -70,6 +79,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function NotesPage() {
   const location = useLocation();
   const data = useLoaderData() as LoaderData;
+  const actionData = useActionData() as ActionData | undefined;
 
   return (
     <div>
@@ -78,11 +88,20 @@ export default function NotesPage() {
       </Form>
       <h1>Notes</h1>
       <Form method="post" key={location.key} className="flexer">
-        <input aria-label="Title" name="title" />
+        <input
+          aria-label="Title"
+          name="title"
+          aria-describedby={actionData?.error ? "title-error" : undefined}
+        />
         <button name="action" value="create-note" type="submit">
           Save
         </button>
       </Form>
+      {actionData?.error && (
+        <p className="error" id="title-error">
+          {actionData.error}
+        </p>
+      )}
 
       <h2>Notes</h2>
       {data.notes.length === 0 ? (
