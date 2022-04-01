@@ -6,13 +6,13 @@ import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import invariant from "tiny-invariant";
 
-const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
   if (userId) return redirect("/");
   return {};
 };
 
-const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
@@ -29,11 +29,11 @@ const action: ActionFunction = async ({ request }) => {
   return createUserSession(request, user.id, "/");
 };
 
-const meta: MetaFunction = () => ({
+export const meta: MetaFunction = () => ({
   title: "Login",
 });
 
-function LoginPage() {
+export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
 
@@ -75,6 +75,3 @@ function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;
-export { action, loader, meta };
