@@ -132,3 +132,11 @@ function NoteDisplay({ note }: { note: Note }) {
     </div>
   );
 }
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+
+  return (
+    <div className="error">An unexpected error occurred: {error.message}</div>
+  );
+}
